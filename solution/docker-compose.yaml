@@ -1,0 +1,24 @@
+version: '3'
+services:
+  csvsrv:
+    image: infracloudio/csvserver:latest
+    volumes:
+    - type: bind
+      source: ./inputFile
+      target: /csvserver/inputdata
+      read_only: true
+    ports:
+    - "9393:9300"
+    environment:
+    - CSVSERVER_BORDER=Orange
+  prometheus:
+    image: prom/prometheus:v2.22.0
+    volumes:
+    - type: bind
+      source: ./prometheus.yml
+      target: /etc/prometheus/prometheus.yml
+      read_only: true
+    ports: 
+    - 9090:9090
+    links:
+    - csvsrv:csvsrv

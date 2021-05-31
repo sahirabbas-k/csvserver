@@ -61,7 +61,7 @@
 
    ```docker run --name csvsrv -d -e CSVSERVER_BORDER=Orange -v "$(pwd)"/inputFile:/csvserver/inputdata -p 9393:9300 infracloudio/csvserver:latest```   
 
-##PART II
+## PART II
 
 1. Repeat the stop and delete operation
 2. Create a docker-compose.yaml file.
@@ -83,3 +83,40 @@ services:
 3. Run the application with docker-compose up.
    
    ``` docker-compose up -d``` 
+
+## PART III
+
+1.Add Prometheus container (prom/prometheus:v2.22.0) to the docker-compose.yaml form part II.
+
+```
+version: '3'
+services:
+  csvsrv:
+    image: infracloudio/csvserver:latest
+    volumes:
+    - type: bind
+      source: ./inputFile
+      target: /csvserver/inputdata
+      read_only: true
+    ports:
+    - "9393:9300"
+    environment:
+    - CSVSERVER_BORDER=Orange
+  prometheus:
+    image: prom/prometheus:v2.22.0
+    volumes:
+    - type: bind
+      source: ./prometheus.yml
+      target: /etc/prometheus/prometheus.yml
+      read_only: true
+    ports: 
+    - 9090:9090
+    links:
+    - csvsrv:csvsrv
+
+   ```
+2. Configure Prometheus to collect data from our application at         application:port/metrics endpoint.
+
+    To Configure Prometheus to collect data from our application. Create a prometheus.yml with the required target. 
+    
+    The prometheus.yml available in the solution directory
