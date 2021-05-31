@@ -37,4 +37,26 @@
 
     ```./gencsv.sh 100 200 300```
 
-    
+3. Attach the bash script output file to the docker container as volume and run the docker container again to resolve the issue. 
+   
+   ```docker run --name csvsrv -d -v "$(pwd)"/inputFile:/csvserver/inputdata infracloudio/csvserver:latest```
+
+   Identify the application port. 
+
+   ```docker exec -it csvsrv netstat -tulnp```
+
+      In this case, application is listening on port 9300
+
+      Once the port is identified stop and delete the container
+
+      ``` 
+         docker stop csvsrv
+         docker rm csvsrv
+      ```
+   Bind the container port to the host to access the application in the browser
+
+   ```docker run --name csvsrv -d -v "$(pwd)"/inputFile:/csvserver/inputdata -p 9393:9300 infracloudio/csvserver:latest```
+
+   Repeat the stop and delete operation and pass the env to the container to get the Orange color header.
+
+   ```docker run --name csvsrv -d -e CSVSERVER_BORDER=Orange -v "$(pwd)"/inputFile:/csvserver/inputdata -p 9393:9300 infracloudio/csvserver:latest```    
