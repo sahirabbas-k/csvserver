@@ -59,4 +59,27 @@
 
    Repeat the stop and delete operation and pass the env to the container to get the Orange color header.
 
-   ```docker run --name csvsrv -d -e CSVSERVER_BORDER=Orange -v "$(pwd)"/inputFile:/csvserver/inputdata -p 9393:9300 infracloudio/csvserver:latest```    
+   ```docker run --name csvsrv -d -e CSVSERVER_BORDER=Orange -v "$(pwd)"/inputFile:/csvserver/inputdata -p 9393:9300 infracloudio/csvserver:latest```   
+
+##PART II
+
+1. Repeat the stop and delete operation
+2. Create a docker-compose.yaml file.
+ ```
+ version: '3'
+services:
+  csvsrv:
+    image: infracloudio/csvserver:latest
+    volumes:
+    - type: bind
+      source: ./inputFile
+      target: /csvserver/inputdata
+      read_only: true
+    ports:
+    - "9393:9300"
+    environment:
+    - CSVSERVER_BORDER=Orange
+  ```
+3. Run the application with docker-compose up.
+   
+   ``` docker-compose up -d``` 
